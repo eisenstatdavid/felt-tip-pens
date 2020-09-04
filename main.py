@@ -31,6 +31,8 @@ def main():
         flattened[i * data.width : (i + 1) * data.width] for i in range(data.height)
     ]
     print("objective =", metrics.objective(matrix))
+    local_search.improve(matrix, 1000)
+    print("objective =", metrics.objective(matrix))
     local_search.improve_large_neighborhood(matrix, 10000)
     local_search.improve(matrix, 1000)
     print("objective =", metrics.objective(matrix))
