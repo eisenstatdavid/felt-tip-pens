@@ -1,3 +1,5 @@
+import random
+
 import data
 import local_search
 import metrics
@@ -23,8 +25,10 @@ def export(filename, matrix, scale=72):
 
 
 def main():
+    flattened = list(range(len(data.colors)))
+    random.shuffle(flattened)
     matrix = [
-        list(range(i * data.width, (i + 1) * data.width)) for i in range(data.height)
+        flattened[i * data.width : (i + 1) * data.width] for i in range(data.height)
     ]
     print("objective =", metrics.objective(matrix))
     local_search.improve_large_neighborhood(matrix, 10000)
