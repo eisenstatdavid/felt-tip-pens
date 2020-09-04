@@ -3,6 +3,7 @@ import random
 import data
 import local_search
 import metrics
+import patches
 
 
 def export(filename, matrix, scale=72):
@@ -25,16 +26,29 @@ def export(filename, matrix, scale=72):
 
 
 def main():
-    flattened = list(range(len(data.colors)))
-    random.shuffle(flattened)
-    matrix = [
-        flattened[i * data.width : (i + 1) * data.width] for i in range(data.height)
-    ]
-    print("objective =", metrics.objective(matrix))
-    local_search.improve(matrix, 1000)
-    print("objective =", metrics.objective(matrix))
-    local_search.improve_large_neighborhood(matrix, 10000)
-    local_search.improve(matrix, 1000)
+    if False:
+        flattened = list(range(len(data.colors)))
+        random.shuffle(flattened)
+        matrix = [
+            flattened[i * data.width : (i + 1) * data.width] for i in range(data.height)
+        ]
+    else:
+        patch_iterator = iter(patches.optimize())
+        matrix = [[None] * data.width for i in range(data.height)]
+        for i in range(0, data.height, 2):
+            for j in range(0, data.width, 2):
+                (
+                    matrix[i][j],
+                    matrix[i][j + 1],
+                    matrix[i + 1][j],
+                    matrix[i + 1][j + 1],
+                ) = next(patch_iterator)
+    if False:
+        print("objective =", metrics.objective(matrix))
+        local_search.improve(matrix, 1000)
+        print("objective =", metrics.objective(matrix))
+        local_search.improve_large_neighborhood(matrix, 10000)
+        local_search.improve(matrix, 1000)
     print("objective =", metrics.objective(matrix))
     export("arrangement.html", matrix)
 
