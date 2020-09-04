@@ -1,4 +1,5 @@
 import data
+import metrics
 
 
 def export(filename, matrix, scale=72):
@@ -24,6 +25,7 @@ def main():
     matrix = [
         list(range(i * data.width, (i + 1) * data.width)) for i in range(data.height)
     ]
+    print("objective =", metrics.objective(matrix))
     export("arrangement.html", matrix)
 
 
