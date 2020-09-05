@@ -1,5 +1,6 @@
 import random
 
+import cp_sat
 import data
 import local_search
 import matches
@@ -44,8 +45,10 @@ def main():
                     matrix[i + 1][j],
                     matrix[i + 1][j + 1],
                 ) = next(patch_iterator)
-    else:
+    elif True:
         matrix = matches.initial_matrix()
+    else:
+        matrix = cp_sat.optimize()
     if True:
         print("objective =", metrics.objective(matrix))
         local_search.improve(matrix, 1000)
