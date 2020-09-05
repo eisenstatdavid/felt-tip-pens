@@ -51,7 +51,18 @@ def brute_force(members, cluster_distances, h, w):
     )
 
 
-def iterative_pair_and_merge():
+def apply_flips(matrix, flips):
+    out_matrix = [[None] * data.width for i in range(data.height)]
+    for i in range(data.height):
+        for j in range(data.width):
+            flip = flips[(i // 4) * 5 + (j // 2)]
+            ixor = 3 if flip & 2 else 0
+            jxor = flip & 1
+            out_matrix[i ^ ixor][j ^ jxor] = matrix[i][j]
+    return out_matrix
+
+
+def initial_matrix():
     clusters = [{i} for i in range(len(data.colors))]
     clusters = pair_and_merge(clusters)
     clusters = pair_and_merge(clusters)
@@ -59,9 +70,25 @@ def iterative_pair_and_merge():
     cluster_distances = [
         [cluster_distance(c1, c2) for c2 in clusters] for c1 in clusters
     ]
-    return [
+    cluster_iterator = (
         brute_force(clusters[i], metrics.distances, 4, 2)
         for i in brute_force(
             range(len(clusters)), cluster_distances, data.height // 4, data.width // 2
         )
-    ]
+    )
+    matrix = [[None] * data.width for i in range(data.height)]
+    for i in range(0, data.height, 4):
+        for j in range(0, data.width, 2):
+            c = list(next(cluster_iterator))
+            for di in range(4):
+                for dj in range(2):
+                    matrix[i + di][j + dj] = c[di * 2 + dj]
+    return min(
+        (
+            apply_flips(matrix, flips)
+            for flips in itertools.product(
+                range(4), repeat=(data.height // 4) * (data.width // 2)
+            )
+        ),
+        key=metrics.objective,
+    )

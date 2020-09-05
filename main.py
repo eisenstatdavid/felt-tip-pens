@@ -45,14 +45,7 @@ def main():
                     matrix[i + 1][j + 1],
                 ) = next(patch_iterator)
     else:
-        cluster_iterator = iter(matches.iterative_pair_and_merge())
-        matrix = [[None] * data.width for i in range(data.height)]
-        for i in range(0, data.height, 4):
-            for j in range(0, data.width, 2):
-                c = list(next(cluster_iterator))
-                for di in range(4):
-                    for dj in range(2):
-                        matrix[i + di][j + dj] = c[di * 2 + dj]
+        matrix = matches.initial_matrix()
     if True:
         print("objective =", metrics.objective(matrix))
         local_search.improve(matrix, 1000)
