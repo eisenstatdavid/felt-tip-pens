@@ -40,17 +40,12 @@ def cost_of_swap(matrix, u, v):
     return new_cost - old_cost
 
 
-def improve(matrix, rounds):
-    for r in range(rounds):
-        pairs = [(u, v) for u in vertices for v in vertices if u < v]
-        random.shuffle(pairs)
-        changed = False
-        for u, v in pairs:
-            if cost_of_swap(matrix, u, v) < 0:
-                swap(matrix, u, v)
-                changed = True
-        if not changed:
-            return
+def improve_once(matrix):
+    pairs = [(u, v) for u in vertices for v in vertices if u < v]
+    random.shuffle(pairs)
+    for u, v in pairs:
+        if cost_of_swap(matrix, u, v) < 0:
+            swap(matrix, u, v)
 
 
 def random_maximal_independent_set():
@@ -63,14 +58,20 @@ def random_maximal_independent_set():
     return mis
 
 
-def improve_large_neighborhood(matrix, rounds):
-    for r in range(rounds):
-        moving = random_maximal_independent_set()
-        colors = {at(matrix, u) for u in moving}
-        cost, matches = assignment.min_cost_assignment(
-            moving,
-            colors,
-            lambda u, k: sum(metrics.distances[k][at(matrix, v)] for v in neighbors(u)),
-        )
-        for (i, j), k in matches:
+def improve_large_neighborhood_once(matrix):
+    moving = random_maximal_independent_set()
+    colors = {at(matrix, u) for u in moving}
+    cost, matches = assignment.min_cost_assignment(
+        moving,
+        colors,
+        lambda u, k: sum(metrics.distances[k][at(matrix, v)] for v in neighbors(u)),
+    )
+    for (i, j), k in matches:
+        if matrix[i][j] != k:
             matrix[i][j] = k
+
+
+def improve(matrix, rounds):
+    for r in range(rounds):
+        improve_once(matrix)
+        improve_large_neighborhood_once(matrix)

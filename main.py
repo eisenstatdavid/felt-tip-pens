@@ -56,9 +56,6 @@ def main():
     if True:
         print("objective =", metrics.objective(matrix))
         local_search.improve(matrix, 1000)
-        print("objective =", metrics.objective(matrix))
-        local_search.improve_large_neighborhood(matrix, 10000)
-        local_search.improve(matrix, 1000)
     print("objective =", metrics.objective(matrix))
     export("arrangement.html", matrix)
 
