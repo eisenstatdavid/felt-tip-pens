@@ -2,6 +2,7 @@ import random
 
 import data
 import local_search
+import matches
 import metrics
 import patches
 
@@ -32,7 +33,7 @@ def main():
         matrix = [
             flattened[i * data.width : (i + 1) * data.width] for i in range(data.height)
         ]
-    else:
+    elif False:
         patch_iterator = iter(patches.optimize())
         matrix = [[None] * data.width for i in range(data.height)]
         for i in range(0, data.height, 2):
@@ -43,7 +44,16 @@ def main():
                     matrix[i + 1][j],
                     matrix[i + 1][j + 1],
                 ) = next(patch_iterator)
-    if False:
+    else:
+        cluster_iterator = iter(matches.iterative_pair_and_merge())
+        matrix = [[None] * data.width for i in range(data.height)]
+        for i in range(0, data.height, 4):
+            for j in range(0, data.width, 2):
+                c = list(next(cluster_iterator))
+                for di in range(4):
+                    for dj in range(2):
+                        matrix[i + di][j + dj] = c[di * 2 + dj]
+    if True:
         print("objective =", metrics.objective(matrix))
         local_search.improve(matrix, 1000)
         print("objective =", metrics.objective(matrix))

@@ -63,22 +63,14 @@ def random_maximal_independent_set():
     return mis
 
 
-def random_set():
-    return random.sample(vertices, len(vertices) // 2)
-
-
 def improve_large_neighborhood(matrix, rounds):
     for r in range(rounds):
-        moving = random_set() if r < rounds // 2 else random_maximal_independent_set()
+        moving = random_maximal_independent_set()
         colors = {at(matrix, u) for u in moving}
         cost, matches = assignment.min_cost_assignment(
             moving,
             colors,
-            lambda u, k: sum(
-                metrics.distances[k][at(matrix, v)]
-                for v in neighbors(u)
-                if v not in moving
-            ),
+            lambda u, k: sum(metrics.distances[k][at(matrix, v)] for v in neighbors(u)),
         )
         for (i, j), k in matches:
             matrix[i][j] = k
