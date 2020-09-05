@@ -5,6 +5,7 @@ from ortools.linear_solver import pywraplp
 
 import data
 import metrics
+import patches
 
 
 def cluster_distance(c1, c2):
@@ -63,9 +64,12 @@ def apply_flips(matrix, flips):
 
 
 def initial_matrix():
-    clusters = [{i} for i in range(len(data.colors))]
-    clusters = pair_and_merge(clusters)
-    clusters = pair_and_merge(clusters)
+    if False:
+        clusters = [set(patch) for patch in patches.optimize()]
+    else:
+        clusters = [{i} for i in range(len(data.colors))]
+        clusters = pair_and_merge(clusters)
+        clusters = pair_and_merge(clusters)
     clusters = pair_and_merge(clusters)
     cluster_distances = [
         [cluster_distance(c1, c2) for c2 in clusters] for c1 in clusters
